@@ -3,6 +3,7 @@
 import { useChat } from '@ai-sdk/react';
 import { isToolUIPart } from 'ai';
 import { useState, useEffect, useRef } from 'react';
+import ThemeToggle from '@/components/ThemeToggle';
 
 // Componente para visualizar el clima de forma premium
 const WeatherCard = ({ data }: { data: any }) => {
@@ -82,6 +83,7 @@ export default function Chat() {
           </div>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <button className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />

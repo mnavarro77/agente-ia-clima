@@ -7,9 +7,10 @@ import {
 } from 'ai';
 import { z } from 'zod';
 import { gateway } from '@ai-sdk/gateway';
+import { db } from '@/lib/prisma';
 
 export async function POST(req: Request) {
-    const { messages }: { messages: UIMessage[] } = await req.json();
+    const { messages, id }: { messages: UIMessage[], id?: string } = await req.json();
 
     const result = streamText({
         model: gateway('openai/gpt-5.3-chat'),
@@ -44,6 +45,12 @@ export async function POST(req: Request) {
                 },
             }),
         },
+        async onFinish({ text, toolCalls, toolResults }) {
+            // Save messages if chatId is provided
+            if (id) {
+                // Here you would implement saving the user's message and the AI's response to the DB
+            }
+        }
     });
 
     return result.toUIMessageStreamResponse();

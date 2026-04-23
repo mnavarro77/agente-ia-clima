@@ -1,5 +1,7 @@
 'use client';
 
+'use client';
+
 import { useState } from 'react';
 import ChatListItem from './ChatListItem';
 import { useChats } from '../hooks/useChats';
@@ -14,11 +16,13 @@ interface Chat {
 interface ChatSidebarProps {
   onSelectChat?: (chatId: string) => void;
   currentChatId?: string;
+  onClose?: () => void;
 }
 
 export default function ChatSidebar({
   onSelectChat,
   currentChatId,
+  onClose,
 }: ChatSidebarProps) {
   const { chats, isLoading, error, createChat, deleteChat } = useChats();
   const [isCreatingChat, setIsCreatingChat] = useState(false);
@@ -53,18 +57,27 @@ export default function ChatSidebar({
   return (
     <aside className="w-64 bg-gray-900 text-white h-screen flex flex-col border-r border-gray-700">
       {/* Header */}
-      <div className="p-4 border-b border-gray-700">
+      <div className="flex items-center justify-between gap-3 p-4 border-b border-gray-700">
         <button
           onClick={handleNewChat}
           disabled={isCreatingChat}
-          className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 rounded-md font-medium transition-colors"
+          className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 rounded-md font-medium transition-colors"
         >
           {isCreatingChat ? 'Creating...' : '+ New Chat'}
         </button>
-        {error && (
-          <p className="text-red-400 text-sm mt-2">{error}</p>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/10 bg-white/10 text-white hover:bg-white/20 transition"
+            aria-label="Cerrar sidebar"
+          >
+            ×
+          </button>
         )}
       </div>
+      {error && (
+        <p className="px-4 text-red-400 text-sm mt-2">{error}</p>
+      )}
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto">

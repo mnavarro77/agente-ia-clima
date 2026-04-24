@@ -8,6 +8,47 @@ import {
 import { z } from 'zod';
 import { gateway } from '@ai-sdk/gateway';
 
+const sampleChatMessages: UIMessage[] = [
+    {
+        id: '1',
+        role: 'assistant',
+        parts: [
+            {
+                type: 'text',
+                text: 'Hola, soy tu asistente. ¿En qué puedo ayudarte hoy?',
+            },
+        ],
+    },
+    {
+        id: '2',
+        role: 'user',
+        parts: [
+            {
+                type: 'text',
+                text: 'Quiero saber cómo funciona este chat.',
+            },
+        ],
+    },
+    {
+        id: '3',
+        role: 'assistant',
+        parts: [
+            {
+                type: 'text',
+                text: 'Aquí puedes enviar mensajes y recibir respuestas generadas por IA.',
+            },
+        ],
+    },
+];
+
+export async function GET() {
+    return new Response(JSON.stringify(sampleChatMessages), {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+}
+
 export async function POST(req: Request) {
     const { messages }: { messages: UIMessage[] } = await req.json();
 

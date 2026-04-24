@@ -4,16 +4,21 @@ import { NextResponse } from "next/server";
 
 // M3: Listar todos los chats, ordenados por fecha (más reciente primero)
 export async function GET() {
-    let chats = await db.chat.findMany({
-        orderBy: { createdAt: "desc" },
-        include: {
-            messages: {
-                take: 1,              // solo el último mensaje como preview
-                orderBy: { createdAt: "desc" },
+    try {
+        let chats = await db.chat.findMany({
+            orderBy: { createdAt: "desc" },
+            include: {
+                messages: {
+                    take: 1,              // solo el último mensaje como preview
+                    orderBy: { createdAt: "desc" },
+                },
             },
-        },
-    });
-    return NextResponse.json(chats);
+        });
+        return NextResponse.json(chats);
+    } catch (error) {
+        console.error("Error in GET /api/chats:", error);
+        return NextResponse.json({ error: "Internal Server Error", details: error instanceof Error ? error.message : String(error) }, { status: 500 });
+    }
 }
 
 

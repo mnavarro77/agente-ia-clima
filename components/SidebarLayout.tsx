@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ChatSidebar from '@/components/ChatSidebar';
+import { usePathname } from 'next/navigation';
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
@@ -9,6 +10,12 @@ interface SidebarLayoutProps {
 
 export default function SidebarLayout({ children }: SidebarLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+  const isLandingPage = pathname === '/';
+
+  if (isLandingPage) {
+    return <main className="min-h-screen">{children}</main>;
+  }
 
   return (
     <div className="min-h-full flex bg-zinc-50 dark:bg-zinc-950">
@@ -61,3 +68,4 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
     </div>
   );
 }
+

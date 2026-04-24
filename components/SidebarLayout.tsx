@@ -2,13 +2,23 @@
 
 import { useState } from 'react';
 import ChatSidebar from '@/components/ChatSidebar';
+import { usePathname } from 'next/navigation';
+import { useChats } from '@/hooks/useChats';
+import { ChatProvider, useChatContext } from '@/hooks/ChatContext';
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
 }
 
-export default function SidebarLayout({ children }: SidebarLayoutProps) {
+function SidebarLayoutContent({ children }: SidebarLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { selectedChatId, setSelectedChatId, selectedChatTitle } = useChatContext();
+  const pathname = usePathname();
+  const isLandingPage = pathname === '/';
+
+  if (isLandingPage) {
+    return <main className="min-h-screen">{children}</main>;
+  }
 
   return (
     <div className="min-h-full flex bg-zinc-50 dark:bg-zinc-950">
@@ -29,7 +39,14 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
           </button>
         </div>
 
-        <ChatSidebar onClose={() => setSidebarOpen(false)} />
+        <ChatSidebar 
+          onSelectChat={(id) => {
+            setSelectedChatId(id);
+            setSidebarOpen(false);
+          }} 
+          currentChatId={selectedChatId}
+          onClose={() => setSidebarOpen(false)} 
+        />
       </div>
 
       {sidebarOpen && (
@@ -41,14 +58,16 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
         />
       )}
 
-      <div className="flex-1 min-h-screen md:ml-72">
-        <div className="md:hidden border-b border-zinc-200 bg-white/90 backdrop-blur-sm">
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="md:hidden border-b border-zinc-200 bg-white/90 backdrop-blur-sm sticky top-0 z-30">
           <div className="mx-4 flex items-center justify-between py-3">
-            <span className="text-sm font-semibold text-zinc-900">Chat</span>
+            <span className="text-sm font-semibold text-zinc-900 truncate pr-4">
+              {selectedChatTitle}
+            </span>
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 shadow-sm transition hover:bg-zinc-50"
+              className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 shadow-sm transition hover:bg-zinc-50 shrink-0"
             >
               <span>Chats</span>
               <span className="text-lg">☰</span>
@@ -56,8 +75,20 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
           </div>
         </div>
 
-        <main>{children}</main>
+        <main className="flex-1 relative overflow-hidden">
+          {children}
+        </main>
       </div>
     </div>
+  );
+}
+
+export default function SidebarLayout({ children }: SidebarLayoutProps) {
+  const { chats } = useChats();
+  
+  return (
+    <ChatProvider chats={chats}>
+      <SidebarLayoutContent>{children}</SidebarLayoutContent>
+    </ChatProvider>
   );
 }

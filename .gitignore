@@ -45,3 +45,5 @@ next-env.d.ts
 # Prisma
 *.db
 app/generated/
+
+/lib/generated/prisma

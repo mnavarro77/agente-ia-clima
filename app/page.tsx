@@ -76,7 +76,7 @@ export default function Chat() {
               <div className="flex items-center gap-1.5">
                 <div className={`w-1.5 h-1.5 rounded-full ${isLoading ? 'bg-blue-500 animate-pulse' : 'bg-emerald-500'}`} />
                 <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
-                  {isLoading ? 'Processing request...' : 'Online & Ready'}
+                  {isLoading ? 'Guardando...' : 'Online & Ready'}
                 </span>
               </div>
             </div>

@@ -10,7 +10,32 @@ import { gateway } from '@ai-sdk/gateway';
 import { db } from '@/lib/prisma';
 
 export async function POST(req: Request) {
-    const { messages, id }: { messages: UIMessage[], id?: string } = await req.json();
+    const body = await req.json();
+    const { messages, id }: { messages: UIMessage[], id?: string } = body;
+    
+    // Si useChat no manda id explícito, usamos el id del primer mensaje o uno por defecto
+    const chatId = id || (messages.length > 0 ? messages[0].id : 'new-chat');
+
+    if (messages.length > 0 && messages[0].role === 'user') {
+        const msg = messages[0] as any;
+        let firstMessage = typeof msg.content === 'string' ? msg.content : '';
+        if (!firstMessage && Array.isArray(msg.parts)) {
+            const textPart = msg.parts.find((p: any) => p.type === 'text');
+            if (textPart) firstMessage = textPart.text || '';
+        }
+        
+        const title = firstMessage.length > 50 ? firstMessage.substring(0, 50) + '...' : firstMessage || 'Nuevo Chat';
+        
+        try {
+            await db.chat.upsert({
+                where: { id: chatId },
+                update: { title },
+                create: { id: chatId, title }
+            });
+        } catch (error) {
+            console.error("Error guardando el titulo del chat:", error);
+        }
+    }
 
     const result = streamText({
         model: gateway('openai/gpt-5.3-chat'),
